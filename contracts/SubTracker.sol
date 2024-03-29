@@ -108,7 +108,7 @@ contract SubTracker {
     }
 
     //Returns: all subscribers in length
-    function getTotalSubsribers() public view returns (uint256) {
+    function getTotalSubscribers() public view returns (uint256) {
         return subscribers.length;
     }
 

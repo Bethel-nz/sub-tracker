@@ -1,6 +1,7 @@
 import { run } from 'hardhat';
 import { Addressable } from 'ethers';
 
+//Verifies the contract with its abi using etherscan
 const verify = async (contractAddress: string | Addressable, args: any[]) => {
   console.log('Verifying contract...');
   try {

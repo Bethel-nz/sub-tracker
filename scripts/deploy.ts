@@ -5,7 +5,7 @@ import verify from '../utils/verify';
 async function main() {
   let INITIAL_PRICE = 1; // 1 wei, apparently my test eth wasnt enough to go past 1 wei
   let SUBSCRIPTION_DURATION = 2419200; // assuming a subscription lasts for 28 days, we multiply 24hours in seconds * 28days
-  console.log('script is running');
+  console.log('Deploying Contract ......');
   const SubTrackerFactory: SubTracker__factory =
     await ethers.getContractFactory('SubTracker');
   const subTracker: SubTracker = await SubTrackerFactory.deploy(
@@ -31,8 +31,8 @@ async function main() {
 
   try {
     const txResponse = await subTracker.subscribe({
-      value: ethers.parseEther('0.05'),
-    }); // Assuming a 0.05 ETH price
+      value: ethers.parseEther('1'),
+    }); // Assuming a 1 ETH price
     await txResponse.wait();
     console.log(`Subscription successful for address ${addressToSubscribe}`);
   } catch (error: any) {
@@ -43,14 +43,17 @@ async function main() {
     }
   }
 
-  const addressToCheck = ''; // assuming someone subscribed and you want to check if they have a subscription place the address there
+  const addressToCheck = '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266'; // assuming someone subscribed and you want to check if they have a subscription place the address there
   const isActive = await subTracker.isActiveSubscriber(addressToCheck);
   console.log(`User ${addressToCheck} is active subscriber: ${isActive}`);
 
-  const expiryTimestamp = await subTracker.getSubscriptionExpiry(
-    addressToCheck
-  );
-  console.log(`Subscription expiry for ${addressToCheck}:`, expiryTimestamp);
+  // const expiryTimestamp = await subTracker.getSubscriptionExpiry(
+  //   addressToCheck
+  // );
+  // console.log(`Subscription expiry for ${addressToCheck}:`, expiryTimestamp);
+
+  const totalActiveSubscribers = await subTracker.getTotalActiveSubscribers();
+  console.log(`Total active subscribers:`, totalActiveSubscribers.toString());
 
   const totalInactive = await subTracker.getTotalInactiveSubscribers();
   console.log('Total inactive subscribers:', totalInactive.toString());
