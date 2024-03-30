@@ -184,4 +184,33 @@ describe('SubTracker', function () {
 
     assert.isFalse(isSubscriber1Active);
   });
+  it('Should allow the owner to withdraw the contract balance', async function () {
+    const [owner, subscriber1] = await ethers.getSigners();
+
+    await SubTracker.connect(subscriber1).subscribe({
+      value: ethers.parseEther('1'),
+    });
+
+    const initialContractBalance = await ethers.provider.getBalance(
+      SubTracker.getAddress()
+    );
+
+    await SubTracker.withDraw();
+    const newContractBalance = await ethers.provider.getBalance(
+      SubTracker.getAddress()
+    );
+    assert.isAbove(Number(initialContractBalance), Number(newContractBalance));
+  });
+
+  it('Should prevent non-owners from withdrawing', async function () {
+    const [_, subscriber1] = await ethers.getSigners();
+
+    await SubTracker.connect(subscriber1).subscribe({
+      value: ethers.parseEther('1'),
+    });
+
+    await expect(
+      SubTracker.connect(subscriber1).withDraw()
+    ).to.be.revertedWithCustomError(SubTracker, 'NotOwner');
+  });
 });
